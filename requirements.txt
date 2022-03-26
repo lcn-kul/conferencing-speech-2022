@@ -1,0 +1,35 @@
+# local package
+-e .
+
+# external requirements
+click
+Sphinx
+sphinx-rtd-theme
+coverage
+awscli
+flake8
+python-dotenv>=0.5.1
+
+# project requirements
+autopep8
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+requests
+tqdm
+wget
+
+
+# models
+datasets
+h5py
+librosa
+transformers
+huggingface_hub
+torchaudio
+torchvision # transforms
+jiwer
+pytorch-lightning
+webdataset
+
+  

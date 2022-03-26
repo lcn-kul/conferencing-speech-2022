@@ -1,0 +1,5 @@
+# Pytorch Lightning checkpoint files.
+*.ckpt
+
+# Don't push local XLS-R model.
+wav2vec2-xls-r-300m
