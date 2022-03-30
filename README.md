@@ -50,7 +50,7 @@ make create_environment
 
 **2. Download Datasets**
 ```
-make data
+make download
 ```
 
 **3. Extract MFCC/XLS-R Features**
