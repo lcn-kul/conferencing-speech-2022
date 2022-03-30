@@ -8,7 +8,7 @@ Source code for LCN submission for ConferencingSpeech2022 challenge.
 |----------------------------------|:---------:|:---------:|:----------:|
 | Validation RMSE (All Corpora)    |   0.8224  |   0.5475  | **0.5000** |
 | Validation RMSE (PSTN & Tencent) |   0.6614  |   0.4965  | **0.4759** |
-| Test RMSE (PSTN & Tencent)       |   0.768   |    TBD    |  **0.365** |
+| Test RMSE (PSTN & Tencent)       |   0.745   |   0.543   |  **0.344** |
 
 
 ## 2. Installation
