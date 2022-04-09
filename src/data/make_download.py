@@ -20,24 +20,23 @@ def main():
 
     # Download datasets.
     download_train()
-    download_test()
+    # download_test() # *** TUB data unavailable as of 07/04/2022! (Permission Denied)
 
     # Preprocess raw test CSV since its format is slightly different from the
     # rest of the pipeline.
-    process_raw_test_csv()
+    # process_raw_test_csv() # *** TUB data unavailable as of 07/04/2022! (Permission Denied)
 
     # Transform the raw CSVs into the standardized format.
     process_raw_csvs(Split.TRAIN, example=True)
     process_raw_csvs(Split.TRAIN_SUBSET, example=True)
     process_raw_csvs(Split.VAL, example=True)
     process_raw_csvs(Split.VAL_SUBSET, example=True)
-    # process_raw_csvs(Split.TRAINVAL, example=True)
-    process_raw_csvs(Split.TEST, example=True)
+    # process_raw_csvs(Split.TEST, example=True)
+    process_raw_csvs(Split.TRAIN, example=False)
     process_raw_csvs(Split.TRAIN_SUBSET, example=False)
     process_raw_csvs(Split.VAL, example=False)
     process_raw_csvs(Split.VAL_SUBSET, example=False)
-    # process_raw_csvs(Split.TRAINVAL, example=False)
-    process_raw_csvs(Split.TEST, example=False)
+    # process_raw_csvs(Split.TEST, example=False)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-.PHONY: activate_venv clean data lint requirements test_environment
+.PHONY: clean download eval eval_example example_zip features features_example lint requirements predict predict_example predict_submission shards shards_example test_environment train train_example
 
 #################################################################################
 # GLOBALS                                                                       #
@@ -25,17 +25,13 @@ endif
 # COMMANDS                                                                      #
 #################################################################################
 
-## Activate the virtual environment.
-activate_venv: test_environment
-	eval echo $(ACTIVATE_CMD)
-
 ## Install Python Dependencies
 # 	ipython kernel install --user --name=$(PROJECT_NAME)
-requirements: test_environment activate_venv
+requirements: test_environment
 	$(PYTHON_INTERPRETER) -m pip install ipykernel
 	python -m ipykernel install --user --name $(PROJECT_NAME)
 	$(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
-	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt
+	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt --find-links https://download.pytorch.org/whl/torch_stable.html
 
 ## Make Dataset
 download: requirements
@@ -61,6 +57,14 @@ shards: features
 shards_example: features_example
 	$(PYTHON_INTERPRETER) src/data/make_shards.py --example
 
+## Make Norm
+norm: features
+	$(PYTHON_INTERPRETER) src/data/make_norm.py
+
+## Make Norm (example)
+norm_example: features_example
+	$(PYTHON_INTERPRETER) src/data/make_norm.py --example
+
 ## Do training
 train: shards
 	$(PYTHON_INTERPRETER) src/train/make_train.py
@@ -83,7 +87,7 @@ predict_example: train_example
 
 ## Do evaluation
 eval: predict
-	$(PYTHON_INTERPRETER) src/predict/make_eval.py
+	$(PYTHON_INTERPRETER) src/eval/make_eval.py
 
 ## Do evaluation (example)
 eval_example: predict_example

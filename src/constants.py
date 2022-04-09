@@ -95,7 +95,7 @@ NISQA_TRAIN_CSVS = [
 PSTN_TRAIN_DIR = DIR_DATA_RAW.joinpath("pstn", "train")
 PSTN_TRAIN_DIR.mkdir(mode=0o755, parents=True, exist_ok=True)
 PSTN_TRAIN_URL = "https://challenge.blob.core.windows.net/pstn/train.zip"
-PSTN_TRAIN_ZIP_FOLDER = "pstn"  # Extracting ZIP gives this folder.
+PSTN_TRAIN_ZIP_FOLDER = "pstn_train"  # Extracting ZIP gives this folder.
 PSTN_TRAIN_CSVS = [
     CsvInfo(
         csv_path=PSTN_TRAIN_DIR.joinpath(x),
@@ -221,7 +221,7 @@ class DatasetDir():
         self.predictions_dir.mkdir(mode=0o755, parents=True, exist_ok=True)
 
 
-# TRAIN-VAL SPLIT (similar to what is expec)
+# TRAIN-VAL SPLIT
 VAL_SPLIT = 0.15
 
 # Full datasets.
@@ -229,7 +229,6 @@ DATASET_TRAIN = DatasetDir(DIR_DATA_PROCESSED.joinpath("train"))
 DATASET_TRAIN_SUBSET = DatasetDir(DIR_DATA_PROCESSED.joinpath("train_subset"))
 DATASET_VAL = DatasetDir(DIR_DATA_PROCESSED.joinpath("val"))
 DATASET_VAL_SUBSET = DatasetDir(DIR_DATA_PROCESSED.joinpath("val_subset"))
-DATASET_TRAINVAL = DatasetDir(DIR_DATA_PROCESSED.joinpath("trainval"))
 DATASET_TEST = DatasetDir(DIR_DATA_PROCESSED.joinpath("test"))
 
 # Example datasets.
@@ -239,7 +238,6 @@ DATASET_TRAIN_SUBSET_EG = DatasetDir(
 DATASET_VAL_EG = DatasetDir(DIR_DATA_PROCESSED.joinpath("val_eg"))
 DATASET_VAL_SUBSET_EG = DatasetDir(
     DIR_DATA_PROCESSED.joinpath("val_subset_eg"))
-DATASET_TRAINVAL_EG = DatasetDir(DIR_DATA_PROCESSED.joinpath("trainval_eg"))
 DATASET_TEST_EG = DatasetDir(DIR_DATA_PROCESSED.joinpath("test_eg"))
 
 
@@ -252,7 +250,5 @@ def get_dataset(split: Split, example: bool):
         return DATASET_VAL_EG if example else DATASET_VAL
     if split == Split.VAL_SUBSET:
         return DATASET_VAL_SUBSET_EG if example else DATASET_VAL_SUBSET
-    if split == Split.TRAINVAL:
-        return DATASET_TRAINVAL_EG if example else DATASET_TRAINVAL
     if split == Split.TEST:
         return DATASET_TEST_EG if example else DATASET_TEST

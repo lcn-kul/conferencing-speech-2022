@@ -94,7 +94,7 @@ class CsvDataset(Dataset):
         example_str = "(example) " if example else ""
         print(f"{example_str}Creating dataloader for {split_name} set.")
 
-        # Select train, val, trainval or test dataset.
+        # Select train, val or test dataset.
         dataset = constants.get_dataset(split, example)
         normalization_dataset = constants.get_dataset(normalization_split, example)
         file_name = str(config.input).lower().split(".")[1]  # audio, mfcc, ...

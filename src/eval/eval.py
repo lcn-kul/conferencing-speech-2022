@@ -15,9 +15,9 @@ def _eval(csv):
     pccs = np.corrcoef(mos, mos_pred)[0][1]
     rmse = np.sqrt(mean_squared_error(mos, mos_pred))
     SROCC = stats.spearmanr(mos_pred, mos)[0]
-    print(round(pccs,4))
-    print(round(SROCC,4))
-    print(round(rmse,4))
+    print("PCC:  " + str(round(pccs,4)))
+    print("SRCC: " + str(round(SROCC,4)))
+    print("RMSE: " + str(round(rmse,4)))
 
 def eval():
     from pathlib import Path

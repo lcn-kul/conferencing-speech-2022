@@ -12,7 +12,7 @@ from src.utils.split import Split
 @click.option('-e', '--example', is_flag=True)
 @click.option('-i', '--partition_idx', default=0)
 @click.option('-n', '--num_partitions', default=1)
-@click.option('-c', '--cpus', default=0)
+@click.option('-c', '--cpus', default=1)
 @click.option('-g', '--gpus', default=0)
 def main(example, partition_idx, num_partitions, cpus, gpus):
     """ Runs data processing scripts to turn raw data from (../raw) into
@@ -21,7 +21,8 @@ def main(example, partition_idx, num_partitions, cpus, gpus):
     logger = logging.getLogger(__name__)
     logger.info('predicting submission model')
 
-
+    print("Since some of the test data is unavailable, this code has been commented out.")
+    exit(1)
 
     # Train models.
     modelpath = "final_model_17mar_xlsr_blstm/best-epoch=012-val_loss=0.014164.ckpt"

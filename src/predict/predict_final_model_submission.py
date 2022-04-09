@@ -74,7 +74,7 @@ def predict_final_model_submission(example: bool, modelpath: str, split: Split, 
 
 if __name__ == "__main__":
     example: bool = False
-    modelpath = "final_model_15mar_xlsr_blstm/best-epoch=012-val_loss_epoch=0.014236.ckpt"
+    modelpath = "final_model_17mar_xlsr_blstm/best-epoch=012-val_loss=0.014164.ckpt"
     cpus: int = 1
     gpus: int = 0
     split = Split.TEST

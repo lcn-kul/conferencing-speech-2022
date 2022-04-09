@@ -12,7 +12,7 @@ from src.utils.split import Split
 @click.option('-e', '--example', is_flag=True)
 @click.option('-i', '--partition_idx', default=0)
 @click.option('-n', '--num_partitions', default=1)
-@click.option('-c', '--cpus', default=0)
+@click.option('-c', '--cpus', default=1)
 @click.option('-g', '--gpus', default=0)
 def main(example, partition_idx, num_partitions, cpus, gpus):
     """ Runs data processing scripts to turn raw data from (../raw) into
@@ -21,14 +21,10 @@ def main(example, partition_idx, num_partitions, cpus, gpus):
     logger = logging.getLogger(__name__)
     logger.info('predicting model')
 
-    # Predict jobs for each config in ALL_CONFIGS...
-    #  - TRAIN_SUBSET + VAL
-    #  - TRAIN_SUBSET + VAL_SUBSET
-    #  - TRAIN + VAL
-    #  - TRAIN + VAL_SUBSET
+    # Predict jobs on VAL and VAL_SUBSET for each config in ALL_CONFIGS
     jobs = [
         (config, use_subset, split, norm_split)
-        for use_subset in [True, False]
+        for use_subset in [True,]
         for config in ALL_CONFIGS
         for split in [Split.VAL, Split.VAL_SUBSET]
         for norm_split in [Split.TRAIN_SUBSET if use_subset else Split.TRAIN,]

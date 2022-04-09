@@ -11,7 +11,7 @@ from src import constants
 from src.utils.csv_info import STANDARDIZED_CSV_INFO
 from src.utils.full_path import full_path
 from src.utils.run_once import run_once
-from src.utils.split import ALL_SPLITS, Split
+from src.utils.split import Split, ALL_SPLITS, DEV_SPLITS
 
 
 def _decode_non_mp3_file_like(file, new_sr):
@@ -46,7 +46,7 @@ class CsvDataset(Dataset):
         self.example = example
         self.col_key = col_key
 
-        # Select train, val, trainval or test dataset.
+        # Select train, val or test dataset.
         dataset = constants.get_dataset(split, example)
 
         # Type to CSV column.
@@ -202,100 +202,6 @@ def _calculate_norm_wds(split: Split, example: bool):
         torch.save(N, str(N_path))
 
 
-def _calculate_norm_trainval(example: bool):
-
-    # Print split name.
-    example_str = "(example) " if example else ""
-    print(f"{example_str}Calculating norm for split: trainval.")
-
-    # Make sure train/val CSVs have been processed.
-    train = constants.get_dataset(Split.TRAIN, example)
-    val = constants.get_dataset(Split.VAL, example)
-    trainval = constants.get_dataset(Split.TRAINVAL, example)
-
-    for key in {"audio", "mfcc", "mfcc_ext", "xlsr"}:
-        # Construct and check paths.
-        train_mu_path = train.norm_dir.joinpath(f"{key}.mu.pt")
-        train_var_path = train.norm_dir.joinpath(f"{key}.var.pt")
-        train_N_path = train.norm_dir.joinpath(f"{key}.N.pt")
-        val_mu_path = val.norm_dir.joinpath(f"{key}.mu.pt")
-        val_var_path = val.norm_dir.joinpath(f"{key}.var.pt")
-        val_N_path = val.norm_dir.joinpath(f"{key}.N.pt")
-        trainval_mu_path = trainval.norm_dir.joinpath(f"{key}.mu.pt")
-        trainval_var_path = trainval.norm_dir.joinpath(f"{key}.var.pt")
-        trainval_N_path = trainval.norm_dir.joinpath(f"{key}.N.pt")
-        if not train_mu_path.exists():
-            raise Exception(f"train mu path does not exist: {train_mu_path}")
-        if not train_var_path.exists():
-            raise Exception(f"train var path does not exist: {train_var_path}")
-        if not val_mu_path.exists():
-            raise Exception(f"val mu path does not exist: {val_mu_path}")
-        if not val_var_path.exists():
-            raise Exception(f"val var path does not exist: {val_var_path}")
-
-        # Load train mean, variance, sample_count.
-        mu1 = torch.load(str(train_mu_path))
-        var1 = torch.load(str(train_var_path))
-        N1 = torch.load(str(train_N_path))
-
-        # Load val mean, variance, sample_count.
-        mu2 = torch.load(str(val_mu_path))
-        var2 = torch.load(str(val_var_path))
-        N2 = torch.load(str(val_N_path))
-
-        # Combined mean.
-        #    μₘₙ = 1/(M+N).(M.μₘ + N.μₙ)
-        mu = 1/(N1+N2) * (N1*mu1 + N2*mu2)
-
-        # Combined variance.
-        #   σ²ₘₙ = 1/(M+N).(M.(σ²ₘ+μₘ²) + N.(σ²ₙ+μₙ²)) - μₘₙ²
-        X1 = N1*(var1 + mu1.pow(2))
-        X2 = N2*(var2 + mu2.pow(2))
-        var = 1/(N1+N2) * (X1 + X2) - mu.pow(2)
-
-        # Combined samples.
-        N = N1 + N2
-
-        # Save resuts.
-        torch.save(mu, str(trainval_mu_path))
-        torch.save(var, str(trainval_var_path))
-        torch.save(N, str(trainval_N_path))
-
-        # TODO: save values
-
-        # Derivation.
-        # Source: https://stats.stackexchange.com/a/43183
-        #
-        # def mean: μ = 1/N.∑_{i=1..N} (xᵢ)
-        # def var: σ² = 1/N.∑_{i=1..N} (xᵢ - μ)²
-        #
-        # Required derivations:
-        #  - ∑_{i=1..N} (xᵢ) = N.μ
-        #  - ∑_{i=1..N} (xᵢ²) = N.(σ² + μ²)
-        #    since:
-        #     - N.σ² = ∑_{i=1..N} (xᵢ - μ)²
-        #            = ∑_{i=1..N} (xᵢ² - 2.xᵢμ + μ²)
-        #            = ∑_{i=1..N} (xᵢ²) - 2.μ.∑_{i=1..N} (xᵢ) + N.μ²
-        #            = ∑_{i=1..N} (xᵢ²) - 2.μ.(N.μ) + N.μ²
-        #            = ∑_{i=1..N} (xᵢ²) - N.μ²
-        #
-        # Combination of two sets
-        #  - set m: 1..M
-        #  - set n: M+1..M+N
-        #
-        # combined mean:
-        #    μₘₙ = 1/(M+N).∑_{i=1..M+N} (xᵢ)
-        #        = 1/(M+N).( ∑_{i=1..M} (xᵢ) +  ∑_{i=M+1..M+N} (xᵢ) )
-        #        = 1/(M+N).( M.μₘ + N.μₙ )
-        #
-        # combined variance:
-        #   1. first calculate: X := (M+N)(σ²ₘₙ + μₘₙ²)
-        #      X = ∑_{i=1..M+N} (xᵢ²)
-        #        = ∑_{i=1..M} (xᵢ²) +  ∑_{i=M+1..M+N} (xᵢ²)
-        #        = M.(σ²ₘ + μₘ²) + N.(σ²ₙ + μₙ²)
-        #   2. solving algebraically for σ²ₘₙ:
-        #   σ²ₘₙ = 1/(M+N).(M.(σ²ₘ+μₘ²) + N.(σ²ₙ+μₙ²)) - μₘₙ²
-        #
 
 
 def calculate_norm(split: Split, example: bool):
@@ -309,21 +215,17 @@ def calculate_norm(split: Split, example: bool):
     # Run exactly once.
     with run_once(flag_name) as should_run:
         if should_run:
-            if split == split.TRAINVAL:
-                # Special case: calculate using train+val mean/variance.
-                _calculate_norm_trainval(example)
-            else:
-                try:
-                    _calculate_norm_wds(split, example)
-                except Exception as e:
-                    print(str(e))
-                    print("trying norm calculation using csv")
-                    _calculate_norm_csv(split, example)
+            try:
+                _calculate_norm_wds(split, example)
+            except Exception as e:
+                print(str(e))
+                print("trying norm calculation using csv")
+                _calculate_norm_csv(split, example)
         else:
             print(f"{example_str}Norm already calculated for {split_name} split.")
 
 
 if __name__ == "__main__":
     example: bool = True
-    for split in ALL_SPLITS:
+    for split in DEV_SPLITS:
         calculate_norm(split, example)

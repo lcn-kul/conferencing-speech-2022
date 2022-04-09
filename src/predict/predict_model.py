@@ -51,7 +51,7 @@ def _predict_model(config: Config, example: bool, use_subset: bool, split: Split
         device = 'cpu'
 
     # Load best model.
-    model_name = f"trained_model_{config.name}{example_name}_train{subset_str}"
+    model_name = f"trained_model_{config.name}{example_name}{subset_str}"
     model_dir = constants.MODELS_DIR.joinpath(model_name)
     ckpt_paths = list(model_dir.glob("best*.ckpt"))
     if len(ckpt_paths) == 0:
@@ -86,7 +86,7 @@ def predict_model(config: Config, example: bool, use_subset: bool, split: Split,
     subset_str = "_subset" if use_subset else ""
     split_name = str(split).lower().split(".")[1]
     norm_split_name = str(normalization_split).lower().split(".")[1]
-    flag_name = f"predicted_model_{config.name}_{split_name}_norm_{normalization_split}{example_name}{subset_str}"
+    flag_name = f"predicted_model_{config.name}_{split_name}_norm_{norm_split_name}{example_name}{subset_str}"
 
     # Run exactly once.
     with run_once(flag_name) as should_run:

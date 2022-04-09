@@ -4,7 +4,7 @@ import logging
 from dotenv import find_dotenv, load_dotenv
 
 from src.data.shard.create_shards import create_shards
-from src.utils.split import Split
+from src.utils.split import Split, ALL_SPLITS, DEV_SPLITS
 
 
 @click.command()
@@ -16,12 +16,11 @@ def main(example, partition_idx, num_partitions):
     logger = logging.getLogger(__name__)
     logger.info('creating shards')
 
-    ALL_SPLITS = [Split.TRAIN, Split.TRAIN_SUBSET, Split.VAL, Split.VAL_SUBSET]
-    N = len(ALL_SPLITS)
+    N = len(DEV_SPLITS)
 
     start_idx = int(partition_idx*N/num_partitions)
     end_idx = int((partition_idx+1)*N/num_partitions)
-    splits = ALL_SPLITS[start_idx:end_idx]
+    splits = DEV_SPLITS[start_idx:end_idx]
 
 
     # Extract features.

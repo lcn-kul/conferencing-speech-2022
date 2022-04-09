@@ -43,9 +43,15 @@ Google Drive API credentials.
 
 Run the following commands to reproduce the results.
 
+**Edit 07/04/2022:** The TUB test data is not available at the moment, so I
+have commented out the code related to the test set (download, extract, shards,
+predict).
+
 **1. Create Virtual Environment**
 ```
 make create_environment
+source venv/bin/activate
+make requirements
 ```
 
 **2. Download Datasets**
@@ -53,7 +59,7 @@ make create_environment
 make download
 ```
 
-**3. Extract MFCC/XLS-R Features**
+**3. Extract MFCC/XLS-R Features (GPU Recommended)**
 ```
 make features
 ```
@@ -63,25 +69,33 @@ make features
 make shards
 ```
 
-**5. Train Models (GPU Recommended)**
+**5. Calculate Norm/Variance**
+```
+make norm
+```
+
+**6. Train Models (GPU Recommended)**
 ```
 make train
 ```
 
-**6. Predict Models on Validation Set(s)**
+**7. Predict Models on Validation Set(s)**
 ```
 make predict
 ```
 
-**7. Predict Final Model on Test Set**
+**8. Predict Final Model on Test Set**
+
+**Edit:** commented out implementation (see above)
+
 ```
 make predict_submission
 ```
 
-**8. Follow the [README file](src/eval/README.md) in the `src/eval/` folder to copy
+**9. Follow the [README file](src/eval/README.md) in the `src/eval/` folder to copy
 the ground-truth files and prediction files to the correct locations.**
 
-**9. Evaluate Models on Validation Set(s)**
+**10. Evaluate Models on Validation Set(s)**
 ```
 make eval
 ```

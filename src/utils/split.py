@@ -3,12 +3,11 @@ from enum import Enum
 
 class Split(Enum):
     TRAIN = 0
-    VAL = 1
-    TRAINVAL = 2
-    TEST = 3
-    TRAIN_SUBSET = 4
-    VAL_SUBSET = 5
+    TRAIN_SUBSET = 1
+    VAL = 2
+    VAL_SUBSET = 3
+    TEST = 4
 
 
-# ALL_SPLITS = [Split.TRAIN, Split.VAL, Split.TRAINVAL, Split.TEST]
-ALL_SPLITS = [Split.TRAIN, Split.TRAIN_SUBSET, Split.VAL, Split.VAL_SUBSET, Split.TRAINVAL]
+DEV_SPLITS = [Split.TRAIN, Split.TRAIN_SUBSET, Split.VAL, Split.VAL_SUBSET]
+ALL_SPLITS = [Split.TRAIN, Split.TRAIN_SUBSET, Split.VAL, Split.VAL_SUBSET, Split.TEST]

@@ -251,12 +251,10 @@ XLSR_TRANS_CONFIG = Config(
 )
 
 
+# 4 models used by paper.
 ALL_CONFIGS: List[Config] = [
     MFCC_CONFIG,
     XLSR_CONFIG,
     MFCC_BLSTM_CONFIG,
     XLSR_BLSTM_CONFIG,
-    # XLSR_LARGE_BLSTM_CONFIG,
-    # MFCC_TRANS_CONFIG,
-    # XLSR_TRANS_CONFIG,
 ]

@@ -31,6 +31,7 @@ def run_once(flag_name: str, partition_idx: int = 0, num_partitions: int = 1):
 
     # Construct flag path.
     flag_dir = constants.DIR_DATA_FLAGS
+    flag_dir.mkdir(mode=0o755, parents=True, exist_ok=True)
     flag_path = flag_dir.joinpath(flag_name + ".txt")
     if num_partitions == 1:
         flag_path_part = flag_path

@@ -19,15 +19,11 @@ def main(example, partition_idx, num_partitions):
     # Extract features.
     extract_features(Split.TRAIN, True, partition_idx, num_partitions)
     extract_features(Split.VAL, True, partition_idx, num_partitions)
-    # extract_features(Split.VAL_SUBSET, True, partition_idx, num_partitions)
-    # extract_features(Split.TRAINVAL, example=True, partition_idx, num_partitions)
-    extract_features(Split.TEST, True, partition_idx, num_partitions)
+    # extract_features(Split.TEST, True, partition_idx, num_partitions)
     if not example:
         extract_features(Split.TRAIN, False, partition_idx, num_partitions)
         extract_features(Split.VAL, False, partition_idx, num_partitions)
-        # extract_features(Split.VAL_SUBSET, False, partition_idx, num_partitions)
-        # extract_features(Split.TRAINVAL, example=False)
-        extract_features(Split.TEST, False, partition_idx, num_partitions)
+        # extract_features(Split.TEST, False, partition_idx, num_partitions)
 
 
 if __name__ == '__main__':

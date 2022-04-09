@@ -9,13 +9,11 @@ from src.train.train_model import train_model
 
 @click.command()
 @click.option('-e', '--example', is_flag=True)
-@click.option('-b', '--bas', is_flag=True)
-@click.option('-u', '--use_trainval', is_flag=True)
 @click.option('-i', '--partition_idx', default=0)
 @click.option('-n', '--num_partitions', default=1)
-@click.option('-c', '--cpus', default=0)
+@click.option('-c', '--cpus', default=1)
 @click.option('-g', '--gpus', default=0)
-def main(example, bas, use_trainval, partition_idx, num_partitions, cpus, gpus):
+def main(example, partition_idx, num_partitions, cpus, gpus):
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in ../processed).
     """
@@ -38,7 +36,7 @@ def main(example, bas, use_trainval, partition_idx, num_partitions, cpus, gpus):
         config, use_subset = job
         print(
             f"Training config: {config.name}, use_subset == {use_subset}")
-        train_model(config, example, bas, use_subset, use_trainval, cpus, gpus)
+        train_model(config, example, use_subset, cpus, gpus)
 
 
 if __name__ == '__main__':

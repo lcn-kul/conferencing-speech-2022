@@ -66,7 +66,7 @@ def make_dataloader(config: Config, split: Split, norm_split: Split, example: bo
     example_str = "(example) " if example else ""
     print(f"{example_str}Creating dataloader for {split_name} set using norm split {norm_split_name}.")
 
-    # Select train, val, trainval or test dataset.
+    # Select train, val or test dataset.
     dataset = constants.get_dataset(split, example)
     norm_dataset = constants.get_dataset(norm_split, example)
     file_name = str(config.input).lower().split(".")[1]  # audio, mfcc, ...
@@ -81,18 +81,8 @@ def make_dataloader(config: Config, split: Split, norm_split: Split, example: bo
     var = torch.load(var_path)
 
     # Find shards.
-    if split == Split.TRAINVAL:
-        # Simply combine train+val shards.
-        ds_train = constants.get_dataset(Split.TRAIN, example)
-        ds_val = constants.get_dataset(Split.TRAIN, example)
-        shards_train = ds_train.shards_dir.glob(f"{file_name}.*.tar")
-        shards_train = list(map(str, shards_train))
-        shards_val = ds_val.shards_dir.glob(f"{file_name}.*.tar")
-        shards_val = list(map(str, shards_val))
-        shard_paths = shards_train + shards_val
-    else:
-        shard_paths = dataset.shards_dir.glob(f"{file_name}.*.tar")
-        shard_paths = list(map(str, shard_paths))
+    shard_paths = dataset.shards_dir.glob(f"{file_name}.*.tar")
+    shard_paths = list(map(str, shard_paths))
     if len(shard_paths) == 0:
         msg = f"{example_str}No shards found for {file_name}."
         raise Exception(msg)
@@ -122,7 +112,7 @@ def make_dataloader(config: Config, split: Split, norm_split: Split, example: bo
     return wds_loader
 
 
-def _train_model(config: Config, example: bool, bas: bool, use_subset: bool, use_trainval: bool, cpus: int, gpus: int):
+def _train_model(config: Config, example: bool, use_subset: bool, cpus: int, gpus: int):
 
     # Create model.
     model = Model(config)
@@ -131,9 +121,6 @@ def _train_model(config: Config, example: bool, bas: bool, use_subset: bool, use
     if use_subset:
         train_split = Split.TRAIN_SUBSET
         val_split = Split.VAL_SUBSET
-    elif use_trainval:
-        train_split = Split.TRAINVAL
-        val_split = None
     else:
         train_split = Split.TRAIN
         val_split = Split.VAL
@@ -145,10 +132,8 @@ def _train_model(config: Config, example: bool, bas: bool, use_subset: bool, use
 
     # Trainer parameters.
     example_name = "_example" if example else ""
-    trainval_str = "_trainval" if use_trainval else "_train"
     subset_str = "_subset" if use_subset else ""
-    bas_str = "_bas" if bas else ""
-    out_name = f"trained_model_{config.name}{example_name}{trainval_str}{subset_str}{bas_str}"
+    out_name = f"trained_model_{config.name}{example_name}{subset_str}"
     model_dir = constants.MODELS_DIR.joinpath(out_name)
 
     if val_split is None:
@@ -190,29 +175,26 @@ def _train_model(config: Config, example: bool, bas: bool, use_subset: bool, use
         trainer.fit(model, train_dl, val_dl)
 
 
-def train_model(config: Config, example: bool, bas: bool, use_subset: bool, use_trainval: bool, cpus: int, gpus: int):
+def train_model(config: Config, example: bool, use_subset: bool, cpus: int, gpus: int):
 
     # Flag name. Make sure this operation is only performed once.
     example_name = "_example" if example else ""
     example_str = "(example) " if example else ""
-    trainval_str = "_trainval" if use_trainval else "_train"
     subset_str = "_subset" if use_subset else ""
-    flag_name = f"trained_model_{config.name}{example_name}{trainval_str}{subset_str}"
+    flag_name = f"trained_model_{config.name}{example_name}{subset_str}"
 
     # Run exactly once.
     with run_once(flag_name) as should_run:
         if should_run:
-            _train_model(config, example, bas, use_subset, use_trainval, cpus, gpus)
+            _train_model(config, example, use_subset, cpus, gpus)
         else:
             print(f"{example_str}Model already trained for {config.name}.")
 
 
 if __name__ == "__main__":
     example: bool = True
-    bas: bool = False
-    use_trainval: bool = False
     cpus: int = 1
     gpus: int = 1
     for use_subset in [True, False]:
         for config in ALL_CONFIGS:
-            train_model(config, example, bas, use_subset, use_trainval, cpus, gpus)
+            train_model(config, example, use_subset, cpus, gpus)

@@ -11,7 +11,7 @@ import webdataset as wds
 from src import constants
 from src.utils.csv_info import STANDARDIZED_CSV_INFO
 from src.utils.run_once import run_once
-from src.utils.split import ALL_SPLITS, Split
+from src.utils.split import Split, ALL_SPLITS, DEV_SPLITS
 from src.utils.full_path import full_path
 
 
@@ -127,15 +127,10 @@ def create_shards(split: Split, example: bool):
     example_str = "(example) " if example else ""
     flag_name = f"created_shards_{split_name}{example_name}"
 
-    # Special case: trainval uses features from train+val datasets, otherwise
-    # we would have to create the shards twice.
-    if split == Split.TRAINVAL:
-        print(f"{example_str}Shard creation not needed for {split_name} split.")
-        return
-
     # Run exactly once.
     with run_once(flag_name) as should_run:
         if should_run:
+            print(f"{example_str}Creating shards for {split_name} split.")
             _create_shards(split, example)
         else:
             print(f"{example_str}Shards already created for {split_name} split.")
@@ -143,5 +138,5 @@ def create_shards(split: Split, example: bool):
 
 if __name__ == "__main__":
     example: bool = True
-    for split in ALL_SPLITS:
+    for split in DEV_SPLITS:
         create_shards(split, example)

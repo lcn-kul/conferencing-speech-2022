@@ -10,7 +10,7 @@ from tqdm.auto import tqdm
 
 from src import constants
 from src.utils.run_once import run_once
-from src.utils.split import Split, ALL_SPLITS
+from src.utils.split import Split, ALL_SPLITS, DEV_SPLITS
 from src.utils.csv_info import STANDARDIZED_CSV_INFO
 from src.utils.full_path import full_path
 
@@ -210,9 +210,9 @@ def extract_features(split: Split, example: bool, partition_idx: int = 0, num_pa
     example_str = "(example) " if example else ""
     flag_name = f"extracted_features_{split_name}{example_name}"
 
-    # Special case: trainval uses features from train+val datasets, otherwise
+    # Special case: subset uses features from main datasets, otherwise
     # we would have to extract the features twice.
-    if split == Split.TRAIN_SUBSET or split == Split.VAL_SUBSET or split == Split.TRAINVAL:
+    if split == Split.TRAIN_SUBSET or split == Split.VAL_SUBSET:
         print(f"{example_str}Feature extraction not needed for {split_name} split.")
         return
 
@@ -226,5 +226,5 @@ def extract_features(split: Split, example: bool, partition_idx: int = 0, num_pa
 
 if __name__ == "__main__":
     example: bool = True
-    for split in ALL_SPLITS:
+    for split in DEV_SPLITS:
         extract_features(split, example, partition_idx=0, num_partitions=1)

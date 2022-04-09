@@ -5,53 +5,8 @@ from src import constants
 from src.data.process_raw_csvs.utils.transform_csv import transform_csv
 from src.utils.csv_info import STANDARDIZED_CSV_INFO, STANDARDIZED_CSV_HEADER
 from src.utils.run_once import run_once
-from src.utils.split import ALL_SPLITS, Split
+from src.utils.split import Split, ALL_SPLITS, DEV_SPLITS
 
-
-def _process_trainval(example: bool = False):
-
-    # Print split name.
-    example_str = "(example) " if example else ""
-    print(f"{example_str}Processing raw CSVs for split: trainval.")
-
-    # Make sure train/val CSVs have been processed.
-    train = constants.get_dataset(Split.TRAIN, example)
-    val = constants.get_dataset(Split.VAL, example)
-    trainval = constants.get_dataset(Split.TRAINVAL, example)
-    if not train.csv_path.exists():
-        raise Exception(f"train CSV does not exist: {train.csv_path}")
-    if not val.csv_path.exists():
-        raise Exception(f"val CSV does not exist: {val.csv_path}")
-
-    # Load CSVs.
-    rows = []
-    print(f"{example_str}Loading train CSV: {train.csv_path}")
-    with open(train.csv_path, mode="r", encoding="utf8") as in_csv:
-        csv_reader = csv.reader(in_csv)
-        for idx, row in enumerate(csv_reader):
-            # Skip header row & empty rows.
-            if idx == 0 or len(row) == 0:
-                continue
-            # Append row.
-            rows.append(row)
-    print(f"{example_str}Loading val CSV: {val.csv_path}")
-    with open(val.csv_path, mode="r", encoding="utf8") as in_csv:
-        csv_reader = csv.reader(in_csv)
-        for idx, row in enumerate(csv_reader):
-            # Skip header row & empty rows.
-            if idx == 0 or len(row) == 0:
-                continue
-            # Append row.
-            rows.append(row)
-
-    # Add header row.
-    rows.insert(0, STANDARDIZED_CSV_HEADER)
-
-    # Write CSV rows.
-    print(f"{example_str}Writing trainval CSV: {trainval.csv_path}")
-    with open(trainval.csv_path, encoding="utf8", mode="w") as out_csv:
-        csv_writer = csv.writer(out_csv)
-        csv_writer.writerows(rows)
 
 
 def _process_raw_csvs(split: Split, example: bool = False):
@@ -59,14 +14,8 @@ def _process_raw_csvs(split: Split, example: bool = False):
     # Returns a constants.DatasetDir containing information about the dataset.
     dataset = constants.get_dataset(split, example)
 
-    # TRAINVAL should preferably use _process_trainval(), otherwise the
-    # features will be calculated twice.
-    if split == Split.TRAINVAL:
-        raise Exception(
-            "Please use _process_trainval() for TRAINVAL feature extraction.")
-
     # Select appropriate CSV infos.
-    if split in [Split.TRAIN, Split.TRAIN_SUBSET, Split.VAL, Split.VAL_SUBSET, Split.TRAINVAL]:
+    if split in [Split.TRAIN, Split.TRAIN_SUBSET, Split.VAL, Split.VAL_SUBSET]:
         csv_infos = constants.TRAIN_CSVS
     elif split == Split.TEST:
         csv_infos = constants.TEST_CSVS
@@ -147,17 +96,13 @@ def process_raw_csvs(split: Split, example: bool):
     # Run exactly once.
     with run_once(flag_name) as should_run:
         if should_run:
-            if split == split.TRAINVAL:
-                # Special case: don't extract these features again
-                _process_trainval(example)
-            else:
-                _process_raw_csvs(split, example)
+            _process_raw_csvs(split, example)
         else:
             print(f"{example_str}Raw CSVs already processed for {split_name} split.")
 
 
 if __name__ == "__main__":
     example: bool = True
-    for split in ALL_SPLITS:
+    for split in DEV_SPLITS:
         for example in [True, False]:
             process_raw_csvs(split, example)
