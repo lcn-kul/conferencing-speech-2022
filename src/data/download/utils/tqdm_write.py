@@ -57,7 +57,7 @@ def tqdm_printer(N: int = None):
 
 
 def tqdm_print(x, name, idx):
-    # Use normal print if name or idx is nOne
+    # Use normal print if name or idx is none
     if name is None or idx is None:
         print(x)
         return

@@ -21,7 +21,7 @@ class Transformer(Enum):
 
 
 class Head(Enum):
-    LINEAR = 0
+    POOLATTFF = 0
 
 
 class TrainConfig():
@@ -131,7 +131,7 @@ class Config():
         else:
             raise Exception("Unknown transformer.")
 
-        if head == Head.LINEAR:
+        if head == Head.POOLATTFF:
             self.dim_head_in = self.dim_transformer # * self.feat_seq_len
             self.dim_head_out = 1
 
@@ -147,19 +147,19 @@ train_args = TrainConfig(
 MFCC_CONFIG = Config(
     "MFCC_CONFIG",
     Input.MFCC,
-    Extractor.NONE,
-    Transformer.NONE,
-    Head.LINEAR,
-    feat_seq_len=384,  # 3.84 sec
+    Extractor.NONE, # No extractor needed for the input features "MFCC".
+    Transformer.NONE, # No Bi-LSTM or Transformer module
+    Head.POOLATTFF, # PoolAttFF regressor head.
+    feat_seq_len=384,
     train_config=train_args,
 )
 
 MFCC_EXT_CONFIG = Config(
     "MFCC_EXT_CONFIG",
     Input.MFCC_EXT,
-    Extractor.NONE,
-    Transformer.NONE,
-    Head.LINEAR,
+    Extractor.NONE, # No extractor needed for the input features "MFCC_EXT".
+    Transformer.NONE, # No Bi-LSTM or Transformer module
+    Head.POOLATTFF, # PoolAttFF regressor head.
     feat_seq_len=384,
     train_config=train_args,
 )
@@ -167,9 +167,9 @@ MFCC_EXT_CONFIG = Config(
 XLSR_CONFIG = Config(
     "XLSR_CONFIG",
     Input.XLSR,
-    Extractor.NONE,
-    Transformer.NONE,
-    Head.LINEAR,
+    Extractor.NONE, # No extractor needed for the input features "XLSR".
+    Transformer.NONE, # No Bi-LSTM or Transformer module
+    Head.POOLATTFF, # PoolAttFF regressor head.
     feat_seq_len=384,
     train_config=train_args,
 )
@@ -177,33 +177,33 @@ XLSR_CONFIG = Config(
 MFCC_BLSTM_CONFIG = Config(
     "MFCC_BLSTM_CONFIG",
     Input.MFCC,
-    Extractor.NONE,
-    Transformer.BLSTM,
-    Head.LINEAR,
+    Extractor.NONE, # No extractor needed for the input features "MFCC".
+    Transformer.BLSTM, # Use Bi-LSTM module.
+    Head.POOLATTFF, # PoolAttFF regressor head.
     feat_seq_len=384,
-    dim_transformer=64,
+    dim_transformer=64, # 32 in each direction
     train_config=train_args,
 )
 
 MFCC_EXT_BLSTM_CONFIG = Config(
     "MFCC_EXT_BLSTM_CONFIG",
     Input.MFCC_EXT,
-    Extractor.NONE,
-    Transformer.BLSTM,
-    Head.LINEAR,
+    Extractor.NONE, # No extractor needed for the input features "MFCC_EXT".
+    Transformer.BLSTM, # Use Bi-LSTM module.
+    Head.POOLATTFF, # PoolAttFF regressor head.
     feat_seq_len=384,
-    dim_transformer=64,
+    dim_transformer=64, # 32 in each direction
     train_config=train_args,
 )
 
 XLSR_BLSTM_CONFIG = Config(
     "XLSR_BLSTM_CONFIG",
     Input.XLSR,
-    Extractor.NONE,
-    Transformer.BLSTM,
-    Head.LINEAR,
+    Extractor.NONE, # No extractor needed for the input features "XLSR".
+    Transformer.BLSTM, # Use Bi-LSTM module.
+    Head.POOLATTFF, # PoolAttFF regressor head.
     feat_seq_len=384,
-    dim_transformer=64,
+    dim_transformer=64, # 32 in each direction
     train_config=train_args,
 )
 
@@ -211,11 +211,11 @@ XLSR_BLSTM_CONFIG = Config(
 XLSR_LARGE_BLSTM_CONFIG = Config(
     "XLSR_LARGE_BLSTM_CONFIG",
     Input.XLSR,
-    Extractor.NONE,
-    Transformer.BLSTM,
-    Head.LINEAR,
+    Extractor.NONE, # No extractor needed for the input features "XLSR".
+    Transformer.BLSTM, # Use Bi-LSTM module.
+    Head.POOLATTFF, # PoolAttFF regressor head.
     feat_seq_len=384,
-    dim_transformer=4*64,
+    dim_transformer=4*64, # 4*32 in each direction
     train_config=train_args,
 )
 
@@ -223,9 +223,9 @@ XLSR_LARGE_BLSTM_CONFIG = Config(
 MFCC_TRANS_CONFIG = Config(
     "MFCC_TRANS_CONFIG",
     Input.MFCC,
-    Extractor.NONE,
-    Transformer.TRANSFORMER,
-    Head.LINEAR,
+    Extractor.NONE, # No extractor needed for the input features "MFCC".
+    Transformer.TRANSFORMER, # Use Transformer module.
+    Head.POOLATTFF, # PoolAttFF regressor head.
     feat_seq_len=384,
     train_config=train_args,
 )
@@ -233,9 +233,9 @@ MFCC_TRANS_CONFIG = Config(
 MFCC_EXT_TRANS_CONFIG = Config(
     "MFCC_EXT_TRANS_CONFIG",
     Input.MFCC_EXT,
-    Extractor.NONE,
-    Transformer.TRANSFORMER,
-    Head.LINEAR,
+    Extractor.NONE, # No extractor needed for the input features "MFCC_EXT".
+    Transformer.TRANSFORMER, # Use Transformer module.
+    Head.POOLATTFF, # PoolAttFF regressor head.
     feat_seq_len=384,
     train_config=train_args,
 )
@@ -243,9 +243,9 @@ MFCC_EXT_TRANS_CONFIG = Config(
 XLSR_TRANS_CONFIG = Config(
     "XLSR_TRANS_CONFIG",
     Input.XLSR,
-    Extractor.NONE,
-    Transformer.TRANSFORMER,
-    Head.LINEAR,
+    Extractor.NONE, # No extractor needed for the input features "XLSR".
+    Transformer.TRANSFORMER, # Use Transformer module.
+    Head.POOLATTFF, # PoolAttFF regressor head.
     feat_seq_len=384,
     train_config=train_args,
 )

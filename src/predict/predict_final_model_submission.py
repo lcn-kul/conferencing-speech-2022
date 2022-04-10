@@ -22,16 +22,20 @@ def make_dataloader(config: Config, cpus: int):
 
 
 
-def _predict_model(example: bool, modelpath:str, split: Split, cpus: int, gpus: int):
+def _predict_model(example: bool, modelpath:str, split: Split, cpus: int):
     split_name = str(split).lower().split(".")[1]
     example_name = "_example" if example else ""
+    example_str = "(example) " if example else ""
 
-    if gpus > 0:
-        device = 'cuda'
+    # Device for model computations.
+    if torch.cuda.is_available():
+        device = "cuda"
     else:
-        device = 'cpu'
+        device = "cpu"
+    print(f"{example_str}Using: %s" % device)
 
     # Load best model.
+    # Source: https://github.com/PyTorchLightning/pytorch-lightning/issues/924#issuecomment-591108496
     ckpt_path = constants.MODELS_DIR.joinpath(modelpath)
     model = Model.load_from_checkpoint(str(ckpt_path)).to(device)
 
@@ -54,7 +58,7 @@ def _predict_model(example: bool, modelpath:str, split: Split, cpus: int, gpus: 
             f.write("%0.7f" % out_denorm.item() + "\n")
 
 
-def predict_final_model_submission(example: bool, modelpath: str, split: Split, cpus: int, gpus: int):
+def predict_final_model_submission(example: bool, modelpath: str, split: Split, cpus: int):
 
     # Flag name. Make sure this operation is only performed once.
     example_name = "_example" if example else ""
@@ -66,7 +70,7 @@ def predict_final_model_submission(example: bool, modelpath: str, split: Split, 
     # Run exactly once.
     with run_once(flag_name) as should_run:
         if should_run:
-            _predict_model(example, modelpath, split, cpus, gpus)
+            _predict_model(example, modelpath, split, cpus)
         else:
             print(
                 f"{example_str}Final prediction already made on split {split_name}.")
@@ -75,7 +79,6 @@ def predict_final_model_submission(example: bool, modelpath: str, split: Split, 
 if __name__ == "__main__":
     example: bool = False
     modelpath = "final_model_17mar_xlsr_blstm/best-epoch=012-val_loss=0.014164.ckpt"
-    cpus: int = 1
-    gpus: int = 0
+    cpus: int = 4
     split = Split.TEST
-    predict_final_model_submission(example, modelpath, split, cpus, gpus)
+    predict_final_model_submission(example, modelpath, split, cpus)

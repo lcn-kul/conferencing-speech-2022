@@ -70,6 +70,8 @@ def run_once(flag_name: str, partition_idx: int = 0, num_partitions: int = 1):
                 complete = True
                 break
         
+        # Replace the partition flags with a single flag representing all
+        # partitions complete.
         if complete:
             with open(str(flag_path), "w") as f:
                 f.write("")

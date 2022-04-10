@@ -68,10 +68,9 @@ def _extract_features(split: Split, example: bool, partition_idx: int = 0, num_p
     # Returns a constants.DatasetDir containing information about the dataset.
     dataset = constants.get_dataset(split, example)
 
-    # Load progress.
+    # Load progress for this partition and for the single partition.
     finished_idx = _get_extraction_progress(
         split, example, partition_idx, num_partitions)
-
     single_idx = _get_extraction_progress(split, example, 0, 1)
 
     # For printing...
@@ -124,7 +123,7 @@ def _extract_features(split: Split, example: bool, partition_idx: int = 0, num_p
             # Append row.
             rows.append(row)
 
-    # Which rows are for the partition.
+    # Which rows should be processed by the partition.
     if single_idx == -1:
         partition_start = int(partition_idx/num_partitions * len(rows))
         partition_end = int((partition_idx+1)/num_partitions * len(rows))

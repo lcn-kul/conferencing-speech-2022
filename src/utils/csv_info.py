@@ -17,7 +17,7 @@ class CsvInfo:
     col_audio_path: int
     col_mos: int
     mos_transform: MosTransform = None
-    in_subset: bool = False  # True if this CSV should be included in val_subset
+    in_subset: bool = False  # True if this CSV should be included in val_subset (only PSTN/Tencent).
 
 
 # STANDARDIZED FORMAT

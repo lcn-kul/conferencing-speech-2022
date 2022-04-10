@@ -11,12 +11,9 @@ from src.train.train_model import train_model
 @click.option('-e', '--example', is_flag=True)
 @click.option('-i', '--partition_idx', default=0)
 @click.option('-n', '--num_partitions', default=1)
-@click.option('-c', '--cpus', default=1)
-@click.option('-g', '--gpus', default=0)
-def main(example, partition_idx, num_partitions, cpus, gpus):
-    """ Runs data processing scripts to turn raw data from (../raw) into
-        cleaned data ready to be analyzed (saved in ../processed).
-    """
+@click.option('-c', '--cpus', default=4)
+def main(example, partition_idx, num_partitions, cpus):
+    """Train models."""
     logger = logging.getLogger(__name__)
     logger.info('training model')
 
@@ -36,7 +33,7 @@ def main(example, partition_idx, num_partitions, cpus, gpus):
         config, use_subset = job
         print(
             f"Training config: {config.name}, use_subset == {use_subset}")
-        train_model(config, example, use_subset, cpus, gpus)
+        train_model(config, example, use_subset, cpus)
 
 
 if __name__ == '__main__':

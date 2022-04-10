@@ -77,7 +77,7 @@ def calculate_mse(config: Config, example: bool, use_subset: bool, split: Split,
 if __name__ == "__main__":
     example: bool = True
     for config in ALL_CONFIGS:
-        for use_subset in [True, False]:
+        for use_subset in [True,]:
             if use_subset:
                 train_split = Split.TRAIN_SUBSET
             else:

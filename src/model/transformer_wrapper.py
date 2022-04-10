@@ -17,7 +17,6 @@ class TransformerWrapper(nn.Module):
 
         # Position encoding.
         self.position_encoding = PositionalEncoding(config)
-        # self.position_encoding = PositionEncoding(config)
 
         # Transformer encoder.
         encoder_layer = nn.TransformerEncoderLayer(
@@ -71,32 +70,3 @@ class PositionalEncoding(nn.Module):
         x = x + self.pe.expand(x.shape)
         return x
 
-
-class PositionEncoding(nn.Module):
-
-    def __init__(self, config):
-        super().__init__()
-
-        self.config = config
-
-        # Positional encoding.
-        self.register_buffer("position_ids", torch.arange(
-            config.max_position_embeddings))
-        self.position_embedding = nn.Embedding(
-            config.max_position_embeddings, config.hidden_size)
-
-        # Normalization + Dropout.
-        self.layer_norm = nn.LayerNorm(config.hidden_size)
-        self.dropout = nn.Dropout(config.hidden_dropout_prob)
-
-    def forward(self, x: Tensor) -> Tensor:
-
-        # Positional encoding.
-        # seq_length = x.shape[1]
-        # position_ids = self.position_ids[:, :seq_length]
-        position_ids = self.position_ids.expand(x.shape)
-        x = x + self.position_embedding(position_ids)
-        x = self.layer_norm(x)
-        x = self.dropout(x)
-
-        return x

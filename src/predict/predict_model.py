@@ -39,18 +39,22 @@ def _find_lowest_idx(ckpt_paths: List[str]):
     return lowest_idx
 
 
-def _predict_model(config: Config, example: bool, use_subset: bool, split: Split, normalization_split: Split, cpus: int, gpus: int):
+def _predict_model(config: Config, example: bool, use_subset: bool, split: Split, normalization_split: Split, cpus: int):
     split_name = str(split).lower().split(".")[1]
     norm_split_name = str(normalization_split).lower().split(".")[1]
     example_name = "_example" if example else ""
+    example_str = "(example) " if example else ""
     subset_str = "_subset" if use_subset else ""
 
-    if gpus > 0:
-        device = 'cuda'
+    # Device for model computations.
+    if torch.cuda.is_available():
+        device = "cuda"
     else:
-        device = 'cpu'
+        device = "cpu"
+    print(f"{example_str}Using: %s" % device)
 
     # Load best model.
+    # Source: https://github.com/PyTorchLightning/pytorch-lightning/issues/924#issuecomment-591108496
     model_name = f"trained_model_{config.name}{example_name}{subset_str}"
     model_dir = constants.MODELS_DIR.joinpath(model_name)
     ckpt_paths = list(model_dir.glob("best*.ckpt"))
@@ -78,7 +82,7 @@ def _predict_model(config: Config, example: bool, use_subset: bool, split: Split
             f.write("%0.7f" % out_denorm.item() + "\n")
 
 
-def predict_model(config: Config, example: bool, use_subset: bool, split: Split, normalization_split: Split, cpus: int, gpus: int):
+def predict_model(config: Config, example: bool, use_subset: bool, split: Split, normalization_split: Split, cpus: int):
 
     # Flag name. Make sure this operation is only performed once.
     example_name = "_example" if example else ""
@@ -92,7 +96,7 @@ def predict_model(config: Config, example: bool, use_subset: bool, split: Split,
     with run_once(flag_name) as should_run:
         if should_run:
             _predict_model(config, example, use_subset, split,
-                           normalization_split, cpus, gpus)
+                           normalization_split, cpus)
         else:
             print(
                 f"{example_str}Prediction already made for {config.name} on split {split_name} using {norm_split_name} normalization.")
@@ -100,10 +104,9 @@ def predict_model(config: Config, example: bool, use_subset: bool, split: Split,
 
 if __name__ == "__main__":
     example: bool = True
-    cpus: int = 1
-    gpus: int = 0
+    cpus: int = 4
     for config in ALL_CONFIGS:
-        for use_subset in [True, False]:
+        for use_subset in [True,]:
             if use_subset:
                 train_split = Split.TRAIN_SUBSET
             else:
@@ -111,4 +114,4 @@ if __name__ == "__main__":
             normalization_split = train_split
             for split in [Split.VAL, Split.VAL_SUBSET]:
                 predict_model(config, example, use_subset, split,
-                                normalization_split, cpus, gpus)
+                                normalization_split, cpus)

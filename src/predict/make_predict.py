@@ -12,12 +12,9 @@ from src.utils.split import Split
 @click.option('-e', '--example', is_flag=True)
 @click.option('-i', '--partition_idx', default=0)
 @click.option('-n', '--num_partitions', default=1)
-@click.option('-c', '--cpus', default=1)
-@click.option('-g', '--gpus', default=0)
-def main(example, partition_idx, num_partitions, cpus, gpus):
-    """ Runs data processing scripts to turn raw data from (../raw) into
-        cleaned data ready to be analyzed (saved in ../processed).
-    """
+@click.option('-c', '--cpus', default=4)
+def main(example, partition_idx, num_partitions, cpus):
+    """Make model predictions on validation splits."""
     logger = logging.getLogger(__name__)
     logger.info('predicting model')
 
@@ -38,8 +35,8 @@ def main(example, partition_idx, num_partitions, cpus, gpus):
     # Train models.
     for job in jobs_i:
         config, use_subset, split, norm_split = job
-        print(f"Predicting config: {str(config)} on split {split} using norm {norm_split} (use_subset == {use_subset})")
-        predict_model(config, example, use_subset, split, norm_split, cpus, gpus)
+        print(f"Predicting config: {config.name} on split {split} using norm {norm_split} (use_subset == {use_subset})")
+        predict_model(config, example, use_subset, split, norm_split, cpus)
 
 
 if __name__ == '__main__':

@@ -9,6 +9,7 @@ from src.utils.split import Split
 # PATHS #
 # ===== #
 
+# Locate the root directory of the project, i.e.
 # conferencing-speech-2022/
 DIR_PROJECT = None
 for path in Path(__file__).parents:
@@ -17,7 +18,7 @@ for path in Path(__file__).parents:
         break
 if DIR_PROJECT is None:
     raise Exception("Unable to locate root dir.")
-
+    
 # DIR_PROJECT = Path(__file__).resolve().parents[1]
 
 # conferencing-speech-2022/data/
@@ -61,7 +62,7 @@ IU_BLOOMINGTON_TRAIN_CSVS = [
             out_mos_min=1,
             out_mos_max=5,
         ),
-        in_subset=False,
+        in_subset=False, # Not in PSTN/Tencent subset
     ) for x in (
         "audio_scaled_mos_cosine.csv",
         "audio_scaled_mos_voices.csv",
@@ -83,7 +84,7 @@ NISQA_TRAIN_CSVS = [
         csv_path=NISQA_TRAIN_DIR.joinpath(x),
         col_audio_path=19,  # filepath_deg
         col_mos=9,  # mos
-        in_subset=False,
+        in_subset=False, # Not in PSTN/Tencent subset
     ) for x in (
         "NISQA_corpus_file.csv",
     )
@@ -101,7 +102,7 @@ PSTN_TRAIN_CSVS = [
         csv_path=PSTN_TRAIN_DIR.joinpath(x),
         col_audio_path=0,  # filename
         col_mos=1,  # mos
-        in_subset=True,
+        in_subset=True, # In PSTN/Tencent subset
     ) for x in (
         "pstn_train.csv",
     )
@@ -118,7 +119,7 @@ PSTN_TEST_CSVS = [
         csv_path=PSTN_TEST_DIR.joinpath(x),
         col_audio_path=0,  # deg_wav
         col_mos=1,  # mos
-        in_subset=True,
+        in_subset=True, # In PSTN/Tencent subset
     ) for x in (
         "test_data_pstn.csv",
     )
@@ -136,7 +137,7 @@ TENCENT_TRAIN_CSVS = [
         csv_path=TENCENT_TRAIN_DIR.joinpath(x),
         col_audio_path=0,  # deg_wav
         col_mos=1,  # mos
-        in_subset=True,
+        in_subset=True, # In PSTN/Tencent subset
     ) for x in (
         "withReverberationTrainDevMOS.csv",
         "withoutReverberationTrainDevMOS.csv",
@@ -154,7 +155,7 @@ TENCENT_TEST_CSVS = [
         csv_path=TENCENT_TEST_DIR.joinpath(x),
         col_audio_path=0,  # deg_wav
         col_mos=1,  # mos
-        in_subset=True,
+        in_subset=True, # In PSTN/Tencent subset
     ) for x in (
         "test_data_tencent.csv",
     )
@@ -171,7 +172,7 @@ TUB_TEST_CSVS = [
         csv_path=TUB_TEST_DIR.joinpath(x),
         col_audio_path=0,  # deg_wav
         col_mos=1,  # mos
-        in_subset=True,
+        in_subset=True, # In PSTN/Tencent subset
     ) for x in (
         "test_data_tub.csv",
     )

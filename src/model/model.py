@@ -34,16 +34,17 @@ class Model(pl.LightningModule):
     def forward(self, features: Tensor):
 
         # Extractor.
+        # Note: this is always None in the paper.
         if self.extractor is not None:
             features = self.extractor(features)
 
         # Transformer.
+        # Note: this is either None or Bi-LSTM in the paper.
         if self.transformer is not None:
             features = self.transformer(features)
 
         # Head.
-        # num_feats = self.config.dim_head_in
-        # features = features.contiguous().view((-1, num_feats))
+        # Note: this is always PoolAttFF in the paper.
         features = self.head(features)
 
         # Squeeze.
@@ -82,15 +83,13 @@ class Model(pl.LightningModule):
         sch = self.lr_schedulers()
         sch.step()
 
-        # self.log('train_loss', loss, sync_dist=True) # distributed computing
-        # self.log('train_loss', loss, on_step=False, on_epoch=True) # Too slow
+        # self.log('train_loss', loss, on_step=False, on_epoch=True) # maybe this slows down code
         return loss
 
     def validation_step(self, val_batch, batch_idx):
         features, labels = val_batch
         out = self.forward(features)
         loss = F.mse_loss(out, labels)
-        # self.log('val_loss', loss, sync_dist=True) # distributed computing
         self.log('val_loss', loss, on_step=False, on_epoch=True)
 
     def _construct_extractor(self, extractor: Extractor) -> nn.Module:
@@ -120,8 +119,8 @@ class Model(pl.LightningModule):
 
     def _construct_head(self, head: str) -> nn.Module:
         msg = "Constructing head...\n"
-        if head == Head.LINEAR:
-            msg += "> Using linear head."
+        if head == Head.POOLATTFF:
+            msg += "> Using PoolAttFF head."
             result = HeadWrapper(self.config)
         print(msg)
         return result

@@ -13,7 +13,7 @@ from src.utils.split import Split
 @click.command()
 def main():
     """Download datasets and process raw CSVs. Results will be saved in
-    REPO/data/processed.
+    conferencing-speech-2022/data/processed.
     """
     logger = logging.getLogger(__name__)
     logger.info('Downloading datasets + processing raw CSVs')

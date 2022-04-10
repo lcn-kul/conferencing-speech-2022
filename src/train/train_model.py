@@ -112,7 +112,7 @@ def make_dataloader(config: Config, split: Split, norm_split: Split, example: bo
     return wds_loader
 
 
-def _train_model(config: Config, example: bool, use_subset: bool, cpus: int, gpus: int):
+def _train_model(config: Config, example: bool, use_subset: bool, cpus: int):
 
     # Create model.
     model = Model(config)
@@ -132,6 +132,7 @@ def _train_model(config: Config, example: bool, use_subset: bool, cpus: int, gpu
 
     # Trainer parameters.
     example_name = "_example" if example else ""
+    example_str = "(example) " if example else ""
     subset_str = "_subset" if use_subset else ""
     out_name = f"trained_model_{config.name}{example_name}{subset_str}"
     model_dir = constants.MODELS_DIR.joinpath(out_name)
@@ -157,6 +158,15 @@ def _train_model(config: Config, example: bool, use_subset: bool, cpus: int, gpu
         dirpath=str(model_dir),
         filename="last",
     )
+    # Device for model computations.
+    if torch.cuda.is_available():
+        gpus = 1
+        device = "cuda"
+    else:
+        gpus = 0
+        device = "cpu"
+    print(f"{example_str}Using: %s" % device)
+
     trainer_params = {
         "gpus": gpus,
         "max_epochs": config.train_config.max_epochs,
@@ -175,7 +185,7 @@ def _train_model(config: Config, example: bool, use_subset: bool, cpus: int, gpu
         trainer.fit(model, train_dl, val_dl)
 
 
-def train_model(config: Config, example: bool, use_subset: bool, cpus: int, gpus: int):
+def train_model(config: Config, example: bool, use_subset: bool, cpus: int):
 
     # Flag name. Make sure this operation is only performed once.
     example_name = "_example" if example else ""
@@ -186,15 +196,14 @@ def train_model(config: Config, example: bool, use_subset: bool, cpus: int, gpus
     # Run exactly once.
     with run_once(flag_name) as should_run:
         if should_run:
-            _train_model(config, example, use_subset, cpus, gpus)
+            _train_model(config, example, use_subset, cpus)
         else:
             print(f"{example_str}Model already trained for {config.name}.")
 
 
 if __name__ == "__main__":
     example: bool = True
-    cpus: int = 1
-    gpus: int = 1
-    for use_subset in [True, False]:
+    cpus: int = 4
+    for use_subset in [True,]:
         for config in ALL_CONFIGS:
-            train_model(config, example, use_subset, cpus, gpus)
+            train_model(config, example, use_subset, cpus)
