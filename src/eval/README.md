@@ -17,6 +17,8 @@ and paste them like this.
 src/eval/ground_truths/[split].csv
 ```
 
+**Do this for the val and val_subset splits.**
+
 # 2. Prediction Files
 
 Copy files from
@@ -30,3 +32,5 @@ and paste them like this.
 ```
 src/eval/predictions/[split]/[model_prediction].csv
 ```
+
+**Do this for all predictions in the val and val_subset splits.**
