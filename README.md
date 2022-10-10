@@ -26,18 +26,20 @@ To download the IU Bloomington from Google Drive, you need to download your
 Google Drive API credentials.
 
 1. Follow [these
-   instructions](https://cloud.google.com/docs/authentication/getting-started#creating_a_service_account)
-   to create a Google Cloud project and Service Key.
-   After following these instructions, you will have downloaded a JSON file
-   containing your Google credentials. Place this JSON file in the following
-   location:
+   instructions](https://cloud.google.com/iam/docs/creating-managing-service-accounts#creating)
+   (under "Creating a service account") to create a Google Cloud project and a
+   Service Account for this project.
+2. Next, create a Service Key by following [these
+   instructions](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating)
+   (under "Create a service account key"). You will download a JSON file containing
+   your Google credentials. Place this JSON file in the following location:
    ```
    conferencing-speech-2022/gdrive_creds.json
    ```
-2. Go to [this
+3. Go to [this
    link](https://console.developers.google.com/apis/library/drive.googleapis.com)
    to enable Google Drive API for this project.
-3. Wait 5 minutes for changes to propagate through Google systems.
+4. Wait up to 5 minutes for changes to propagate through Google systems.
 
 ## 3. Reproducing Results
 
