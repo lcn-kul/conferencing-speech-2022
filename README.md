@@ -101,3 +101,18 @@ the ground-truth files and prediction files to the correct locations.**
 ```
 make eval
 ```
+
+## 4. Citation
+
+Tamm, B., Balabin, H., Vandenberghe, R., Van hamme, H. (2022) Pre-trained Speech Representations as Feature Extractors for Speech Quality Assessment in Online Conferencing Applications. Proc. Interspeech 2022, 4083-4087, doi: 10.21437/Interspeech.2022-10147
+
+```
+@inproceedings{tamm22_interspeech,
+  author={Bastiaan Tamm and Helena Balabin and Rik Vandenberghe and Hugo {Van hamme}},
+  title={{Pre-trained Speech Representations as Feature Extractors for Speech Quality Assessment in Online Conferencing Applications}},
+  year=2022,
+  booktitle={Proc. Interspeech 2022},
+  pages={4083--4087},
+  doi={10.21437/Interspeech.2022-10147}
+}
+```
