@@ -16,7 +16,7 @@ Source code for LCN submission for ConferencingSpeech2022 challenge.
 
 **Clone Repository**
 ```
-git clone https://github.com/btamm12/conferencing-speech-2022.git
+git clone https://github.com/lcn-kul/conferencing-speech-2022.git
 cd conferencing-speech-2022
 ```
 
