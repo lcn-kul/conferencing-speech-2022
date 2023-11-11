@@ -10,6 +10,8 @@ Source code for LCN submission for ConferencingSpeech2022 challenge.
 | Validation RMSE (PSTN & Tencent) |   0.6614  |   0.4965  | **0.4759** |
 | Test RMSE (PSTN & Tencent)       |   0.745   |   0.543   |  **0.344** |
 
+**UPDATE:** Also have a look at our other repository for better models and easy inference. \
+https://github.com/lcn-kul/xls-r-analysis-sqa
 
 ## 2. Installation
 *Note: this software was developed for Linux.*
